@@ -1,24 +1,15 @@
 export default {
   async fetch(request, env) {
+    // 1. 获取用户请求的完整路径（比如 /api/video）
     const url = new URL(request.url);
     
-    // 如果用户访问根路径，返回 JSON 内容
-    if (url.pathname === '/' || url.pathname === '') {
-      const jsonUrl = 'https://raw.githubusercontent.com/barry818/TV/refs/heads/main/btv.json';
-      
-      try {
-        const response = await fetch(jsonUrl);
-        // 复制响应，并添加允许跨域的头（如果需要）
-        const newResponse = new Response(response.body, response);
-        newResponse.headers.set('Access-Control-Allow-Origin', '*');
-        newResponse.headers.set('Content-Type', 'application/json');
-        return newResponse;
-      } catch (error) {
-        return new Response('JSON 文件获取失败', { status: 500 });
-      }
-    }
+    // 2. 修改目标地址（这里换成你的最终目标）
+    // 只需要改 hostname（主机名），保留原有的路径和参数
+    url.hostname = "webhtv-remote-cloudflare.879958251.workers.dev";
+    url.protocol = "https:"; // 强制使用 HTTPS
     
-    // 其他路径可以返回 404 或继续处理
-    return new Response('Not Found', { status: 404 });
+    // 3. 转发请求
+    const newRequest = new Request(url, request);
+    return fetch(newRequest);
   },
 };

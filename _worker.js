@@ -1,15 +1,14 @@
 export default {
   async fetch(request, env) {
-    // 1. 获取用户请求的完整路径（比如 /api/video）
     const url = new URL(request.url);
     
-    // 2. 修改目标地址（这里换成你的最终目标）
-    // 只需要改 hostname（主机名），保留原有的路径和参数
-    url.hostname = "raw.githubusercontent.com/barry818/TV/refs/heads/main/btv.json";
-    url.protocol = "https:"; // 强制使用 HTTPS
+    if (url.pathname === '/' || url.pathname === '') {
+      return Response.redirect(
+        'https://raw.githubusercontent.com/barry818/TV/refs/heads/main/btv.json',
+        302  // 302 临时重定向
+      );
+    }
     
-    // 3. 转发请求
-    const newRequest = new Request(url, request);
-    return fetch(newRequest);
+    return new Response('Not Found', { status: 404 });
   },
 };
